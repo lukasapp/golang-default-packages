@@ -8,7 +8,7 @@ type CorsOptions struct {
 	Headers string
 }
 
-func CorsMiddleware(next http.Handler, options *CorsOptions) http.Handler {
+func Cors(next http.Handler, options *CorsOptions) http.Handler {
 	var defaultOrigin = "*"
 	var defaultMethods = "*"
 	var defaultHeaders = "*"
@@ -27,6 +27,7 @@ func CorsMiddleware(next http.Handler, options *CorsOptions) http.Handler {
 		w.Header().Set("Access-Control-Allow-Origin", defaultOrigin)
 		w.Header().Set("Access-Control-Allow-Methods", defaultMethods)
 		w.Header().Set("Access-Control-Allow-Headers", defaultHeaders)
+		w.Header().Add("Access-Control-Allow-Credentials", "true")
 		if r.Method == http.MethodOptions {
 			w.WriteHeader(http.StatusOK)
 			return
