@@ -8,7 +8,7 @@ type CorsOptions struct {
 	Headers string
 }
 
-func Cors(next http.Handler, options *CorsOptions) http.Handler {
+func Cors(options *CorsOptions) Middleware {
 	var defaultOrigin = "*"
 	var defaultMethods = "*"
 	var defaultHeaders = "*"
@@ -23,16 +23,20 @@ func Cors(next http.Handler, options *CorsOptions) http.Handler {
 		defaultHeaders = options.Headers
 	}
 
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", defaultOrigin)
-		w.Header().Set("Access-Control-Allow-Methods", defaultMethods)
-		w.Header().Set("Access-Control-Allow-Headers", defaultHeaders)
-		w.Header().Add("Access-Control-Allow-Credentials", "true")
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
+	return func(next http.Handler) http.Handler {
 
-		next.ServeHTTP(w, r)
-	})
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", defaultOrigin)
+			w.Header().Set("Access-Control-Allow-Methods", defaultMethods)
+			w.Header().Set("Access-Control-Allow-Headers", defaultHeaders)
+			w.Header().Add("Access-Control-Allow-Credentials", "true")
+			if r.Method == http.MethodOptions {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
+
 }
