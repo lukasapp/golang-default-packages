@@ -5,7 +5,7 @@ import (
 )
 
 type HandlerWithError func(writer http.ResponseWriter, req *http.Request) error
-type HandleError func(writer http.ResponseWriter, req *http.Request, err error) error
+type HandleError func(writer http.ResponseWriter, req *http.Request, err error)
 
 func HandleHttpError(next HandlerWithError, handleError HandleError) func(w http.ResponseWriter, r *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
